@@ -1,6 +1,6 @@
 # Principal Component Analysis
 from numpy import array
-from sklearn.decomposition import PCA
+from pca import PCA
 
 ###### USE THIS DATA ########
 # define a matrix
