@@ -1,34 +1,44 @@
-from _distance import manhattan_distance, cosine_distance, euclidean_distance
+from .._distance import manhattan_distance, cosine_distance, euclidean_distance
 import heapq
 import numpy as np
 
 class BaseKNN():
     """
-    Base class for K Nearest Neighbor
+    Base class for K Nearest Neighbor.
+    Not to be used explicitly
+
+    .. note::
+
+        It currently only accepts numpy arrays.
+        Be sure to convert your data to numpy arrays
 
     Parameters
     ----------
         k_neighbor : int
             K number of neighbors to be used for finding target prediction
 
-        algorithm : {`brute`, `kdtree`}, default='brute'
+        algorithm : {‘brute‘, ‘kdtree‘}, default='brute'
             Algorithm for finding the nearest neighbor
-            - If 'brute':
-                Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``
-            - If 'kdtree':
-                Use kdtree algorithm to find the nearest neighbors
             
-        distance_metric: {`manhattan`, `euclidean`, `cosine`}, default='manhttan'
+                - If ‘brute‘:
+                    Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``
+                - If ‘kdtree‘:
+                    Use kdtree algorithm to find the nearest neighbors
+            
+        distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default='manhttan'
             Distance metric used to find the distance between samples
-            - If `manhattan`:
-                Uses the manhattan distance, formula:
-            - If `euclidean`:
-                Uses the euclidean distance, formula:
-            - If `cosine`:
-                Uses the cosine distance, formula:
+
+                - If ‘manhattan‘:
+                    Uses the manhattan distance, formula:
+                - If ‘euclidean‘:
+                    Uses the euclidean distance, formula:
+                - If ‘cosine‘:
+                    Uses the cosine distance, formula:
 
     Attributes
     ----------
+        metrics_ : numpy.array of shape(n_samples, )
+            The distance metric from the test samples to the train samples
             
     """
     def __init__(self, k_neighbor : int = 5, algorithm : str = 'brute', distance_metric : str = 'manhattan'):
