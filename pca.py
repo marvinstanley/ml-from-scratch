@@ -36,7 +36,7 @@ class PCA():
             The ratio of the explained variance
     """
     def __init__(self, n_components: int = None, method: str = 'eigen'):
-        self.n_components = n_components
+        self.n_components = int(n_components)
         self.method = method
 
     def _get_covariance(self, x):
@@ -174,6 +174,8 @@ class PCA():
             numpy.array of shape(num_samples, n_components)
             Matrix that has undergone dimensionality reduction
         """
+        assert self.components_, 'Principal components have not been calculated, run PCA.fit() first'
+
         assert x.shape[1] == self._feature_dim, "Feature Dimension of X is mismatched from the fitted model"
 
         # Standarize the matrix
