@@ -13,5 +13,5 @@ from . import knn
 
 __all__ = [
     "pca",
-    "knn"
+    "knn",
 ]
