@@ -3,7 +3,7 @@ import warnings
 
 class PCA():
     """
-    Principal component analysis (PCA)
+    Principal component analysis (PCA).
 
     It uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.
     This implementation uses eigen decomposition on the covariance matrix rather than Singular Value Decomposition (SVD)
@@ -102,8 +102,9 @@ class PCA():
         Returns
         ----------
             val : numpy.array of shape(num_features)
-                Explained Variance of the Principal Components
+                Explained Variance of the Principal Components. This is the sorted EigenValue
             vec : numpy.array of shape(num_features, num_features)
+                The Principal Components of the vectors. This is the sorted EigenVectors based on the EigenValue
         """
         # Since matrix from covariance is always symmetrical
         # We can immediately use complex Hermitian (conjugate symmetric)
@@ -115,6 +116,36 @@ class PCA():
         vec = vec.T[::-1]
 
         return val, vec
+
+    def _get_svd(self, x):
+        """
+        Using SVD to get the ``components_`` and ``explained_variance_``.
+        Only the matrix Sigma and Vh is going to be used
+
+        Parameters
+        ----------
+            x : numpy.array of shape(num_features, num_features)
+                Matrix to be standarized
+
+        Returns
+        ----------
+            Sigma : numpy.array of shape(num_features)
+                Explained Variance of the Principal Components. This is matrix Sigma or Σ obtained from SVD
+            Vh : numpy.array of shape(num_features, num_features)
+                The Principal Components of the vectors. This is matrix Vh or V* obtained from SVD
+        """
+
+        U, Sigma, Vh = np.linalg.svd(x, full_matrices=False)
+
+        Sigma = (Sigma ** 2) / (4)
+
+        # sort the value based on explained_variance
+        Sigma_ind = np.argsort(Sigma)
+
+        Sigma = Sigma[Sigma_ind[::-1]]
+        Vh = Vh[Sigma_ind[::-1]]
+
+        return Sigma, Vh
 
     def fit(self, x: np.array, limit_var_ratio: bool = False, ratio_threshold: int = 0.6):
         """
@@ -145,11 +176,16 @@ class PCA():
         # Standarize the matrix first
         x = self._standarize(x)
 
-        # Get the covariance of the matrix
-        x = self._get_covariance(x)
+        if self.method == 'eigen':
+            # Get the covariance of the matrix
+            x = self._get_covariance(x)
 
-        # Get the eigenvalue and eigenvectors (components_ and explained_variance_ in sklearn)
-        self.explained_variance_, self.components_ = self._get_eigen(x)
+            # Get the eigenvalue and eigenvectors (components_ and explained_variance_ in sklearn)
+            self.explained_variance_, self.components_ = self._get_eigen(x)
+        
+        elif self.method == 'svd':
+            print('using SVD')
+            self.explained_variance_, self.components_ = self._get_svd(x)
 
         # Calculate variance ratio
         self.explained_variance_ratio_ = self.explained_variance_ / np.sum(self.explained_variance_)
