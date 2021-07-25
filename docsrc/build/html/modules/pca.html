@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>PCA module &mdash; Machine Learning from Scratch 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="kNN module" href="knn.html" />
+    <link rel="prev" title="Welcome to Machine Learning from Scratch’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Machine Learning from Scratch
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PCA module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knn.html">kNN module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_metrics.html">Distance Metric module</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Machine Learning from Scratch</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>PCA module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ml_scratch.pca">
+<span id="pca-module"></span><h1>PCA module<a class="headerlink" href="#module-ml_scratch.pca" title="Permalink to this headline">¶</a></h1>
+<p>This module implements PCA algorithm</p>
+<dl class="py class">
+<dt id="ml_scratch.pca.PCA">
+<em class="property">class </em><code class="sig-prename descclassname">ml_scratch.pca.</code><code class="sig-name descname">PCA</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eigen'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Principal component analysis (PCA)</p>
+<p>It uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.
+This implementation uses eigen decomposition on the covariance matrix rather than Singular Value Decomposition (SVD)</p>
+<p>By default, values fitted are centered on 0 and scaled (standarized)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_components</strong> (<em>int</em>) – <p>Number of Principal Components that want to be kept:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">min</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>decomposition</strong> (<em>{‘eigen’</em><em>, </em><em>‘svd’}</em><em>, </em><em>default=’eigen’</em>) – The method of decomposition.
+‘eigen’ uses the Eigenvalue and Eigenvector Decomposition
+‘svd’ uses the Singular Value Decomposition (SVD)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="ml_scratch.pca.PCA.components_">
+<code class="sig-name descname">components_</code><a class="headerlink" href="#ml_scratch.pca.PCA.components_" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Principal Components that are kept, based on <code class="docutils literal notranslate"><span class="pre">n_components</span></code>.
+Components are sorted based on <code class="docutils literal notranslate"><span class="pre">explained_variance_</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array of shape(n_components, num_features)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ml_scratch.pca.PCA.explained_variance_">
+<code class="sig-name descname">explained_variance_</code><a class="headerlink" href="#ml_scratch.pca.PCA.explained_variance_" title="Permalink to this definition">¶</a></dt>
+<dd><p>The explained variance of the associated components</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array of shape(n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="ml_scratch.pca.PCA.explained_variance_ratio_">
+<code class="sig-name descname">explained_variance_ratio_</code><a class="headerlink" href="#ml_scratch.pca.PCA.explained_variance_ratio_" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ratio of the explained variance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array of shape(n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA._get_covariance">
+<code class="sig-name descname">_get_covariance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA._get_covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA._get_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the covariance of the matrix. Not meant to be used explicitly</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>numpy.cov() considers its input data matrix to have observations in each column,
+and variables in each row.</p>
+<p>Either set rowvar=False or transpose X</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_samples</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be fed to find the covariance</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>x</strong> (<em>numpy.array of shape(num_samples, num_features)</em>) – Matrix which values has been standarized</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA._get_eigen">
+<code class="sig-name descname">_get_eigen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA._get_eigen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA._get_eigen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finding Eigenvalues and Eigenvectors in order to get <code class="docutils literal notranslate"><span class="pre">explained_variance</span></code> and <code class="docutils literal notranslate"><span class="pre">components_</span></code>.
+Not to be used explicitly</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_features</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be standarized</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>val</strong> (<em>numpy.array of shape(num_features)</em>) – Explained Variance of the Principal Components</p></li>
+<li><p><strong>vec</strong> (<em>numpy.array of shape(num_features, num_features)</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA._standarize">
+<code class="sig-name descname">_standarize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA._standarize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA._standarize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standarize the matrix. Not meant to be used explicitly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_samples</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be standarized</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>x</strong> (<em>numpy.array of shape(num_samples, num_features)</em>) – Matrix which values has been standarized</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.array</span></em>, <em class="sig-param"><span class="n">limit_var_ratio</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ratio_threshold</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0.6</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit matrix X to the model to get the Principal Components.</p>
+<p>By default, values fitted are centered on 0 and scaled (standarized)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_samples</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be fit to the model</p></li>
+<li><p><strong>limit_var_ratio</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default=False</em>) – Whether or not to set the components to be kept based on the variance ratio</p></li>
+<li><p><strong>ratio_threshold</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default=0.6</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA.fit_transform">
+<code class="sig-name descname">fit_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit matrix X to the model to get the Principal Components and
+apply feature transformation or dimensionality reduction to matrix X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_samples</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be transformed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>numpy.array of shape(num_samples, n_components)</em></p></li>
+<li><p><em>Matrix that has undergone dimensionality reduction</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_scratch.pca.PCA.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/pca/_pca.html#PCA.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.pca.PCA.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply feature transformation or dimensionality reduction to matrix X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>numpy.array of shape</em><em>(</em><em>num_samples</em><em>, </em><em>num_features</em><em>)</em>) – Matrix to be transformed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>numpy.array of shape(num_samples, n_components)</em></p></li>
+<li><p><em>Matrix that has undergone dimensionality reduction</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="knn.html" class="btn btn-neutral float-right" title="kNN module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to Machine Learning from Scratch’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Stanley Marvin.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
