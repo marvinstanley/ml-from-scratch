@@ -1,6 +1,6 @@
 # Principal Component Analysis
 from numpy import array
-from pca import PCA
+from ml_scratch.pca import PCA
 
 ###### USE THIS DATA ########
 # define a matrix

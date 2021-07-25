@@ -1,4 +1,4 @@
-from knn import KNNRegressor
+from ml_scratch.knn import KNNRegressor
 import numpy as np
 
 model = KNNRegressor(3)
