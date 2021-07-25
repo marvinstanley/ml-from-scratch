@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>kNN module &mdash; Machine Learning from Scratch 1.0.0 documentation</title>
+  <title>kNN module &mdash; Machine Learning from Scratch 0.0.1 documentation</title>
   
 
   
@@ -173,22 +173,6 @@ Be sure to convert your data to numpy arrays</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k_neighbor</strong> (<em>int</em>) – K number of neighbors to be used for finding target prediction</p></li>
-<li><p><strong>algorithm</strong> (<em>{‘brute‘</em><em>, </em><em>‘kdtree‘}</em><em>, </em><em>default='brute'</em>) – <p>Algorithm for finding the nearest neighbor</p>
-<blockquote>
-<div><ul>
-<li><dl class="simple">
-<dt>If ‘brute‘:</dt><dd><p>Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of <code class="docutils literal notranslate"><span class="pre">k_neighbor</span></code></p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>If ‘kdtree‘:</dt><dd><p>Use kdtree algorithm to find the nearest neighbors</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-</p></li>
 <li><p><strong>distance_metric</strong> (<em>{‘manhattan‘</em><em>, </em><em>‘euclidean‘</em><em>, </em><em>‘cosine‘}</em><em>, </em><em>default='manhttan'</em>) – <p>Distance metric used to find the distance between samples. See ml_scratch._distance for more info</p>
 <blockquote>
 <div><ul>
@@ -279,6 +263,9 @@ Counts the highest occuring target label from the near neighbors.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>X</strong> (<em>numpy.array of shape</em><em>(</em><em>n_test_samples</em><em>, </em><em>n_features</em><em>)</em>) – The input of the testing set</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_pred</strong> (<em>numpy.array of shape(n_test_samples)</em>) – The predicted target values based on the test set</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -298,22 +285,6 @@ Be sure to convert your data to numpy arrays</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k_neighbor</strong> (<em>int</em>) – K number of neighbors to be used for finding target prediction</p></li>
-<li><p><strong>algorithm</strong> (<em>{‘brute‘</em><em>, </em><em>‘kdtree‘}</em><em>, </em><em>default='brute'</em>) – <p>Algorithm for finding the nearest neighbor</p>
-<blockquote>
-<div><ul>
-<li><dl class="simple">
-<dt>If ‘brute‘:</dt><dd><p>Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of <code class="docutils literal notranslate"><span class="pre">k_neighbor</span></code></p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>If ‘kdtree‘:</dt><dd><p>Use kdtree algorithm to find the nearest neighbors</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-</p></li>
 <li><p><strong>distance_metric</strong> (<em>{‘manhattan‘</em><em>, </em><em>‘euclidean‘</em><em>, </em><em>‘cosine‘}</em><em>, </em><em>default='manhttan'</em>) – <p>Distance metric used to find the distance between samples. See ml_scratch._distance for more info</p>
 <blockquote>
 <div><ul>
@@ -400,6 +371,14 @@ Be sure to convert your data to numpy arrays</p>
 <code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ml_scratch/knn/_knn.html#KNNRegressor.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_scratch.knn.KNNRegressor.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts the output of the test set from the near neighbors.
 Uses interpolation/mean to find the nearest value from the near neighbors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>numpy.array of shape</em><em>(</em><em>n_test_samples</em><em>, </em><em>n_features</em><em>)</em>) – The input of the testing set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_pred</strong> (<em>numpy.array of shape(n_test_samples)</em>) – The predicted target values based on the test set</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

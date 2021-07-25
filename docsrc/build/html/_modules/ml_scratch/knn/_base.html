@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ml_scratch.knn._base &mdash; Machine Learning from Scratch 1.0.0 documentation</title>
+  <title>ml_scratch.knn._base &mdash; Machine Learning from Scratch 0.0.1 documentation</title>
   
 
   
@@ -173,14 +173,6 @@
 <span class="sd">    ----------</span>
 <span class="sd">        k_neighbor : int</span>
 <span class="sd">            K number of neighbors to be used for finding target prediction</span>
-
-<span class="sd">        algorithm : {‘brute‘, ‘kdtree‘}, default=&#39;brute&#39;</span>
-<span class="sd">            Algorithm for finding the nearest neighbor</span>
-<span class="sd">            </span>
-<span class="sd">                - If ‘brute‘:</span>
-<span class="sd">                    Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``</span>
-<span class="sd">                - If ‘kdtree‘:</span>
-<span class="sd">                    Use kdtree algorithm to find the nearest neighbors</span>
 <span class="sd">            </span>
 <span class="sd">        distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default=&#39;manhttan&#39;</span>
 <span class="sd">            Distance metric used to find the distance between samples</span>
@@ -203,8 +195,6 @@
         <span class="k">assert</span> <span class="n">algorithm</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;brute&#39;</span><span class="p">,</span> <span class="s1">&#39;kd-tree&#39;</span><span class="p">},</span> <span class="s1">&#39;Algorithm not valid, please choose between {</span><span class="se">\&#39;</span><span class="s1">brute</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">kd-tree</span><span class="se">\&#39;</span><span class="s1">}&#39;</span>
         
         <span class="k">assert</span> <span class="n">distance_metric</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;manhattan&#39;</span><span class="p">,</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="s1">&#39;cosine&#39;</span><span class="p">},</span> <span class="s1">&#39;Distance metric not valid, please choose between {</span><span class="se">\&#39;</span><span class="s1">manhattan</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">euclidean</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">cosine</span><span class="se">\&#39;</span><span class="s1">}&#39;</span>
-
-        <span class="k">assert</span> <span class="n">k_neighbor</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;k_neighbor must be an odd number&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">k_neighbor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_neighbor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm</span>
