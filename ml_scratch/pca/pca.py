@@ -174,7 +174,7 @@ class PCA():
             numpy.array of shape(num_samples, n_components)
             Matrix that has undergone dimensionality reduction
         """
-        assert self.components_, 'Principal components have not been calculated, run PCA.fit() first'
+        assert self.components_.any(), 'Principal components have not been calculated, run PCA.fit() first'
 
         assert x.shape[1] == self._feature_dim, "Feature Dimension of X is mismatched from the fitted model"
 
