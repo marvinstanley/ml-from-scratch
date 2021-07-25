@@ -41,6 +41,9 @@ class KNNClassifier(BaseKNN):
             The distance metric from the test samples to the train samples
     """
     def __init__(self, *args, **kwargs):
+        
+        assert kwargs['k_neighbor'] % 2 == 1, 'k_neighbor must be an odd number'
+
         super(KNNClassifier, self).__init__(*args, **kwargs)
 
     def predict(self, X):
@@ -53,7 +56,10 @@ class KNNClassifier(BaseKNN):
             X : numpy.array of shape(n_test_samples, n_features)
                 The input of the testing set
 
-        
+        Returns
+        ----------
+            y_pred : numpy.array of shape(n_test_samples)
+                The predicted target values based on the test set
         """
 
         assert X.shape[1] == self._fit_X.shape[1], "Mismatched number of features from the fitted model \
@@ -111,6 +117,16 @@ class KNNRegressor(BaseKNN):
         """
         Predicts the output of the test set from the near neighbors.
         Uses interpolation/mean to find the nearest value from the near neighbors.
+
+        Parameters
+        ----------
+            X : numpy.array of shape(n_test_samples, n_features)
+                The input of the testing set
+
+        Returns
+        ----------
+            y_pred : numpy.array of shape(n_test_samples)
+                The predicted target values based on the test set
         """
 
         assert X.shape[1] == self._fit_X.shape[1], "Mismatched number of features from the fitted model \

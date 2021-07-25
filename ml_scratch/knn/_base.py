@@ -47,8 +47,6 @@ class BaseKNN():
         
         assert distance_metric in {'manhattan', 'euclidean', 'cosine'}, 'Distance metric not valid, please choose between {\'manhattan\', \'euclidean\', \'cosine\'}'
 
-        assert k_neighbor % 2 == 1, 'k_neighbor must be an odd number'
-
         self.k_neighbor = int(k_neighbor)
         self.algorithm = algorithm
         self.distance_metric = distance_metric
