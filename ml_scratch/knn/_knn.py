@@ -16,14 +16,6 @@ class KNNClassifier(BaseKNN):
     ----------
         k_neighbor : int
             K number of neighbors to be used for finding target prediction
-
-        algorithm : {‘brute‘, ‘kdtree‘}, default='brute'
-            Algorithm for finding the nearest neighbor
-            
-                - If ‘brute‘:
-                    Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``
-                - If ‘kdtree‘:
-                    Use kdtree algorithm to find the nearest neighbors
             
         distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default='manhttan'
             Distance metric used to find the distance between samples. See ml_scratch._distance for more info
@@ -87,14 +79,6 @@ class KNNRegressor(BaseKNN):
         k_neighbor : int
             K number of neighbors to be used for finding target prediction
 
-        algorithm : {‘brute‘, ‘kdtree‘}, default='brute'
-            Algorithm for finding the nearest neighbor
-            
-                - If ‘brute‘:
-                    Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``
-                - If ‘kdtree‘:
-                    Use kdtree algorithm to find the nearest neighbors
-            
         distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default='manhttan'
             Distance metric used to find the distance between samples. See ml_scratch._distance for more info
 
