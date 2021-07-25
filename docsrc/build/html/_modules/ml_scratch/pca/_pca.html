@@ -160,7 +160,7 @@
 
 <div class="viewcode-block" id="PCA"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA">[docs]</a><span class="k">class</span> <span class="nc">PCA</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Principal component analysis (PCA)</span>
+<span class="sd">    Principal component analysis (PCA).</span>
 
 <span class="sd">    It uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.</span>
 <span class="sd">    This implementation uses eigen decomposition on the covariance matrix rather than Singular Value Decomposition (SVD)</span>
@@ -242,7 +242,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">std_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Standarize matrix (x - mean) / standard_deviation</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">)</span> <span class="c1"># / self.std_</span>
 
         <span class="k">return</span> <span class="n">x</span></div>
 
@@ -259,8 +259,9 @@
 <span class="sd">        Returns</span>
 <span class="sd">        ----------</span>
 <span class="sd">            val : numpy.array of shape(num_features)</span>
-<span class="sd">                Explained Variance of the Principal Components</span>
+<span class="sd">                Explained Variance of the Principal Components. This is the sorted EigenValue</span>
 <span class="sd">            vec : numpy.array of shape(num_features, num_features)</span>
+<span class="sd">                The Principal Components of the vectors. This is the sorted EigenVectors based on the EigenValue</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Since matrix from covariance is always symmetrical</span>
         <span class="c1"># We can immediately use complex Hermitian (conjugate symmetric)</span>
@@ -272,6 +273,36 @@
         <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">vec</span></div>
+
+<div class="viewcode-block" id="PCA._get_svd"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA._get_svd">[docs]</a>    <span class="k">def</span> <span class="nf">_get_svd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Using SVD to get the ``components_`` and ``explained_variance_``.</span>
+<span class="sd">        Only the matrix Sigma and Vh is going to be used</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            x : numpy.array of shape(num_features, num_features)</span>
+<span class="sd">                Matrix to be standarized</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">            Sigma : numpy.array of shape(num_features)</span>
+<span class="sd">                Explained Variance of the Principal Components. This is matrix Sigma or Σ obtained from SVD</span>
+<span class="sd">            Vh : numpy.array of shape(num_features, num_features)</span>
+<span class="sd">                The Principal Components of the vectors. This is matrix Vh or V* obtained from SVD</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">U</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">Sigma</span> <span class="o">=</span> <span class="p">(</span><span class="n">Sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="c1"># sort the value based on explained_variance</span>
+        <span class="n">Sigma_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+
+        <span class="n">Sigma</span> <span class="o">=</span> <span class="n">Sigma</span><span class="p">[</span><span class="n">Sigma_ind</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">Vh</span> <span class="o">=</span> <span class="n">Vh</span><span class="p">[</span><span class="n">Sigma_ind</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Vh</span></div>
 
 <div class="viewcode-block" id="PCA.fit"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">limit_var_ratio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -302,19 +333,24 @@
         <span class="c1"># Standarize the matrix first</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standarize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="c1"># Get the covariance of the matrix</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;eigen&#39;</span><span class="p">:</span>
+            <span class="c1"># Get the covariance of the matrix</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="c1"># Get the eigenvalue and eigenvectors (components_ and explained_variance_ in sklearn)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_eigen</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="c1"># Get the eigenvalue and eigenvectors (components_ and explained_variance_ in sklearn)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_eigen</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;svd&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;using SVD&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_svd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="c1"># Calculate variance ratio</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">)</span>
 
         <span class="c1"># Set components that are kept</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">,</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="PCA.transform"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>

@@ -159,11 +159,11 @@
 
 <div class="viewcode-block" id="manhattan_distance"><a class="viewcode-back" href="../../modules/distance_metrics.html#ml_scratch._distance.manhattan_distance">[docs]</a><span class="k">def</span> <span class="nf">manhattan_distance</span><span class="p">(</span><span class="n">X_1</span><span class="p">,</span> <span class="n">X_2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate distance using euclidean.</span>
+<span class="sd">    Calculate distance using manhattan.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">    </span>
-<span class="sd">        {\sum _{i=1}^{n}  \left( q_{i}-p_{i}\\right)^2 }</span>
+<span class="sd">        {\sum _{i=1}^{n}  \left| q_{i}-p_{i}\\right| }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metric</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X_1</span> <span class="o">-</span> <span class="n">X</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">X_2</span><span class="p">]</span> 

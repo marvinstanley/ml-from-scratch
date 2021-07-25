@@ -2,11 +2,11 @@ import numpy as np
 
 def manhattan_distance(X_1, X_2):
     """
-    Calculate distance using euclidean.
+    Calculate distance using manhattan.
 
     .. math::
     
-        {\sum _{i=1}^{n}  \left( q_{i}-p_{i}\\right)^2 }
+        {\sum _{i=1}^{n}  \left| q_{i}-p_{i}\\right| }
 
     """
     metric = [np.sum(np.abs(X_1 - X), axis=1) for X in X_2] 
