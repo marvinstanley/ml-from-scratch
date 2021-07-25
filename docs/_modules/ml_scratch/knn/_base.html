@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ml_scratch.knn._base &mdash; Machine Learning from Scratch 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Machine Learning from Scratch
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/pca.html">PCA module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/knn.html">kNN module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/distance_metrics.html">Distance Metric module</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Machine Learning from Scratch</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ml_scratch.knn._base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ml_scratch.knn._base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.._distance</span> <span class="kn">import</span> <span class="n">manhattan_distance</span><span class="p">,</span> <span class="n">cosine_distance</span><span class="p">,</span> <span class="n">euclidean_distance</span>
+<span class="kn">import</span> <span class="nn">heapq</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">BaseKNN</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for K Nearest Neighbor.</span>
+<span class="sd">    Not to be used explicitly</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        It currently only accepts numpy arrays.</span>
+<span class="sd">        Be sure to convert your data to numpy arrays</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        k_neighbor : int</span>
+<span class="sd">            K number of neighbors to be used for finding target prediction</span>
+
+<span class="sd">        algorithm : {‘brute‘, ‘kdtree‘}, default=&#39;brute&#39;</span>
+<span class="sd">            Algorithm for finding the nearest neighbor</span>
+<span class="sd">            </span>
+<span class="sd">                - If ‘brute‘:</span>
+<span class="sd">                    Use bruteforce search to find the nearest neighbors, uses priority queue with max queue of ``k_neighbor``</span>
+<span class="sd">                - If ‘kdtree‘:</span>
+<span class="sd">                    Use kdtree algorithm to find the nearest neighbors</span>
+<span class="sd">            </span>
+<span class="sd">        distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default=&#39;manhttan&#39;</span>
+<span class="sd">            Distance metric used to find the distance between samples</span>
+
+<span class="sd">                - If ‘manhattan‘:</span>
+<span class="sd">                    Uses the manhattan distance, formula:</span>
+<span class="sd">                - If ‘euclidean‘:</span>
+<span class="sd">                    Uses the euclidean distance, formula:</span>
+<span class="sd">                - If ‘cosine‘:</span>
+<span class="sd">                    Uses the cosine distance, formula:</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        metrics_ : numpy.array of shape(n_samples, )</span>
+<span class="sd">            The distance metric from the test samples to the train samples</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_neighbor</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">algorithm</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;brute&#39;</span><span class="p">,</span> <span class="n">distance_metric</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;manhattan&#39;</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">algorithm</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;brute&#39;</span><span class="p">,</span> <span class="s1">&#39;kd-tree&#39;</span><span class="p">},</span> <span class="s1">&#39;Algorithm not valid, please choose between {</span><span class="se">\&#39;</span><span class="s1">brute</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">kd-tree</span><span class="se">\&#39;</span><span class="s1">}&#39;</span>
+        
+        <span class="k">assert</span> <span class="n">distance_metric</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;manhattan&#39;</span><span class="p">,</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="s1">&#39;cosine&#39;</span><span class="p">},</span> <span class="s1">&#39;Distance metric not valid, please choose between {</span><span class="se">\&#39;</span><span class="s1">manhattan</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">euclidean</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">cosine</span><span class="se">\&#39;</span><span class="s1">}&#39;</span>
+
+        <span class="k">assert</span> <span class="n">k_neighbor</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;k_neighbor must be an odd number&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_neighbor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_neighbor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_metric</span> <span class="o">=</span> <span class="n">distance_metric</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the input sample and target sample to the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            X : numpy.array of shape(n_samples, n_features)</span>
+<span class="sd">                The input data of the training set</span>
+<span class="sd">            y : numpy.array of shape(n_samples)</span>
+<span class="sd">                The output/target data of the training set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;X and y must have the same number of samples&quot;</span>
+
+        <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;y must be a 1D array, got </span><span class="si">{}</span><span class="s2">D array&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X must be a 2D array, got </span><span class="si">{}</span><span class="s2">D array&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">_calc_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the distance of the input test set to the input training set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            X : numpy.array of shape(n_test_samples, n_features)</span>
+<span class="sd">                The input of the testing set</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">            metric : numpy.array of shape(n_test_samples,)</span>
+<span class="sd">                The distances of the test sample calculated from the fitted training set</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_metric</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;manhattan&#39;</span><span class="p">,</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="s1">&#39;cosine&#39;</span><span class="p">},</span> <span class="s1">&#39;Distance metric not valid, please choose between {</span><span class="se">\&#39;</span><span class="s1">manhattan</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">euclidean</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">cosine</span><span class="se">\&#39;</span><span class="s1">}&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_metric</span> <span class="o">==</span> <span class="s1">&#39;manhattan&#39;</span><span class="p">:</span>
+            <span class="n">metric</span> <span class="o">=</span>  <span class="n">manhattan_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_metric</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
+            <span class="n">metric</span> <span class="o">=</span>  <span class="n">cosine_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_metric</span> <span class="o">==</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">:</span>
+            <span class="n">metric</span> <span class="o">=</span>  <span class="n">euclidean_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">metric</span>
+
+    <span class="k">def</span> <span class="nf">_find_neighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bruteforce search of finding the nearest neighbors using priority queue</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            X : numpy.array of shape(n_test_samples, n_features)</span>
+<span class="sd">                The input of the testing set</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">            neigh_dist : numpy.array of shape(k_neighbor, )</span>
+<span class="sd">                The top ``k_neighbor`` neighbors distances from the test set to the training set</span>
+<span class="sd">            neigh_target : numpy.array of shape(k_neighbor, )</span>
+<span class="sd">                The top ``k_neighbor`` neighbors target value of the training set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_distance</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># No need to sort the whole distance, only need to find k minimum</span>
+        <span class="c1"># Use priority queue</span>
+        <span class="n">neigh_dist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neigh_target</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_</span><span class="p">:</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># zip metric with y</span>
+            <span class="c1"># flip the distance because heapq is a min heap (it will pop the min value)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metric</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_y</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_neighbor</span><span class="p">:</span>
+                    <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">heapq</span><span class="o">.</span><span class="n">heappushpop</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+            <span class="n">neigh_dist</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span>
+            <span class="n">neigh_target</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">neigh_dist</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">neigh_target</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Stanley Marvin.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
