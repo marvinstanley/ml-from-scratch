@@ -85,7 +85,7 @@ class PCA():
         self.std_ = np.std(x, axis=0, ddof=1)
 
         # Standarize matrix (x - mean) / standard_deviation
-        x = (x - self.mean_) / self.std_
+        x = (x - self.mean_) # / self.std_
 
         return x
 
@@ -152,12 +152,12 @@ class PCA():
         self.explained_variance_, self.components_ = self._get_eigen(x)
 
         # Calculate variance ratio
-        self.explained_variance_ratio = self.explained_variance_ / np.sum(self.explained_variance_)
+        self.explained_variance_ratio_ = self.explained_variance_ / np.sum(self.explained_variance_)
 
         # Set components that are kept
-        self.explained_variance = self.explained_variance_[:n_components, ]
+        self.explained_variance_ = self.explained_variance_[:n_components]
         self.components_ = self.components_[:n_components]
-        self.explained_variance_ratio = self.explained_variance_ratio[:n_components]
+        self.explained_variance_ratio_ = self.explained_variance_ratio_[:n_components]
 
 
     def transform(self, x):
