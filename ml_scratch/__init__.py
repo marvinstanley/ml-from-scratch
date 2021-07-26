@@ -8,10 +8,10 @@ In the future, this module will be used to learn more about the machine learning
 techniques available by implementing them by myself.
 """
 
-from . import pca
-from . import knn
+# from .import neighbors
+# from . import decomposition
 
 __all__ = [
-    "pca",
-    "knn",
+    "neighbors",
+    "decomposition",
 ]
