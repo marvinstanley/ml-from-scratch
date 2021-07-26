@@ -2,6 +2,8 @@
 # Generate sample data
 import numpy as np
 import matplotlib.pyplot as plt
+
+from sklearn import neighbors
 from ml_scratch.knn import KNNRegressor
 
 np.random.seed(0)
@@ -17,14 +19,26 @@ y[::5] += 1 * (0.5 - np.random.rand(8))
 n_neighbors = 10
 
 
-knn = KNNRegressor(n_neighbors)
+knn = neighbors.KNeighborsRegressor(n_neighbors)
 y_ = knn.fit(X, y).predict(T)
 
+knn_2 = KNNRegressor(n_neighbors)
+
+y_2 = knn_2.fit(X, y).predict(T)
+
+plt.figure(0)
 plt.scatter(X, y, color='darkorange', label='data')
 plt.plot(T, y_, color='navy', label='prediction')
 
 plt.legend()
 plt.title("KNeighborsRegressor")
+
+plt.figure(1)
+plt.scatter(X, y, color='darkorange', label='data')
+plt.plot(T, y_2, color='green', label='prediction')
+
+plt.legend()
+plt.title("Scratch KNNRegressor")
 
 plt.show()
 

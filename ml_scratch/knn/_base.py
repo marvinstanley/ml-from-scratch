@@ -57,12 +57,14 @@ class BaseKNN():
 
         assert X.shape[0] == y.shape[0], "X and y must have the same number of samples"
 
-        assert y.shape[0] == 1, "y must be a 1D array, got {}D array".format(y.shape[0])
+        assert len(y.shape) == 1, "y must be a 1D array, got {}D array".format(len(y.shape))
 
-        assert X.shape[1] == 2, "X must be a 2D array, got {}D array".format(y.shape[0])
+        assert len(X.shape) == 2, "X must be a 2D array, got {}D array".format(len(X.shape))
 
         self._fit_X = X
         self._fit_y = y
+
+        return self
 
     def _calc_distance(self, X):
         """

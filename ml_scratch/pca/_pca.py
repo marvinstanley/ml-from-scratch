@@ -10,6 +10,32 @@ class PCA():
     
     By default, values fitted are centered on 0 and scaled (standarized)
 
+    .. code-block:: python
+
+        from ml_scratch.pca import PCA
+        import numpy as np
+
+        ###### USE THIS DATA ########
+        # define a matrix
+        A = np.array([[1, 2, 3, 4], 
+                    [5, 5, 6, 7], 
+                    [1, 4, 2, 3], 
+                    [5, 3, 2, 1],
+                    [8, 1, 2, 2]])
+                    
+        ###### USE THIS DATA ########
+
+        # # create the PCA instance
+        pca = PCA(2, method='svd')
+        # fit on data
+        pca.fit(A)
+        # access values and vectors
+        print(pca.components_)
+        print(pca.explained_variance_)
+        # transform data
+        B = pca.transform(A)
+        print(B)
+
 
     Parameters
     ----------
@@ -109,7 +135,7 @@ class PCA():
         # Since matrix from covariance is always symmetrical
         # We can immediately use complex Hermitian (conjugate symmetric)
         # Eigh already sorted the eigen value and vectors
-        val, vec = np.linalg.eigh(x)
+        val, vec = np.linalg.eigh(x, 'U')
 
         # reverse the order of the eigen value
         val = val[::-1]
@@ -194,6 +220,8 @@ class PCA():
         self.explained_variance_ = self.explained_variance_[:n_components]
         self.components_ = self.components_[:n_components]
         self.explained_variance_ratio_ = self.explained_variance_ratio_[:n_components]
+
+        return self
 
 
     def transform(self, x):

@@ -4,7 +4,6 @@ import numpy as np
 
 ###### USE THIS DATA ########
 # define a matrix
-# A = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]])
 A = np.array([[1, 2, 3, 4], 
             [5, 5, 6, 7], 
             [1, 4, 2, 3], 

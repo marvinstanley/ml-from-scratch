@@ -1,6 +1,7 @@
 # Principal Component Analysis
 from numpy import array
 from sklearn.decomposition import PCA
+from ml_scratch.pca import PCA as PCA_Scratch
 
 ###### USE THIS DATA ########
 # define a matrix
@@ -14,7 +15,7 @@ print(A)
 ###### USE THIS DATA ########
 
 # create the PCA instance
-pca = PCA(2)
+pca = PCA(4)
 # fit on data
 pca.fit(A)
 # access values and vectors
@@ -22,4 +23,15 @@ print(pca.components_)
 print(pca.explained_variance_)
 # transform data
 B = pca.transform(A)
+print(B)
+
+# create the PCA instance
+pca_2 = PCA_Scratch(4, method='svd')
+# fit on data
+pca_2.fit(A)
+# access values and vectors
+print(pca_2.components_)
+print(pca_2.explained_variance_)
+# transform data
+B = pca_2.transform(A)
 print(B)
