@@ -1,6 +1,9 @@
 # pca-from-scratch
 Principal Component Analysis implementation from scratch
+
 Created for PACMANN AI Research Scientist Recruitment test
+
+Currently have implemented PCA and KNNRegressor + KNNClassifier
 
 See https://marvinstanley.github.io/ml-from-scratch/ for the docs
 
