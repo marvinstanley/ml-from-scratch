@@ -1,7 +1,7 @@
 # Principal Component Analysis
 from numpy import array
 from sklearn.decomposition import PCA
-from ml_scratch.pca import PCA as PCA_Scratch
+from ml_scratch.decomposition import PCA as PCA_Scratch
 
 ###### USE THIS DATA ########
 # define a matrix

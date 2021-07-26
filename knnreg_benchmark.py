@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn import neighbors
-from ml_scratch.knn import KNNRegressor
+from ml_scratch.neighbors import KNNRegressor
 
 np.random.seed(0)
 X = np.sort(5 * np.random.rand(40, 1), axis=0)
