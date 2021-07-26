@@ -12,6 +12,30 @@ class KNNClassifier(BaseKNN):
         It currently only accepts numpy arrays.
         Be sure to convert your data to numpy arrays
 
+    .. code-block:: python
+
+        from ml_scratch.knn import KNNRegressor
+        import numpy as np
+
+        model = KNNRegressor(3)
+
+        A_x = np.array([[1, 2, 3, 4], 
+                    [5, 5, 6, 7], 
+                    [1, 4, 2, 3],
+                    [3, 1, 3, 7],
+                    [2, 8, 1, 9],
+                    [1, 5, 9, 7]])
+
+        # A_y = ['A', 'A', 'A', 'B', 'B', 'B']
+        A_y = [1.0, 2.5, 0.6, -1.0, 5.0, 3.0]
+
+        B_x = np.array([[5, 3, 2, 1],
+                    [8, 1, 2, 2]])
+
+        model.fit(A_x, A_y)
+        print(model.predict(B_x))
+
+
     Parameters
     ----------
         k_neighbor : int
@@ -57,6 +81,8 @@ class KNNClassifier(BaseKNN):
         assert X.shape[1] == self._fit_X.shape[1], "Mismatched number of features from the fitted model \
         expected shape of (n_test_samples, {}) got (n_test_samples, {})".format(self._fit_X.shape[1], X.shape[1])
 
+        assert len(X.shape) == 2, "X must be a 2D array, got {}D array".format(len(X.shape))
+
         _, y_pred = self._find_neighbor(X)
 
         # Find max occurance of label
@@ -73,6 +99,39 @@ class KNNRegressor(BaseKNN):
 
         It currently only accepts numpy arrays.
         Be sure to convert your data to numpy arrays
+
+    .. code-block:: python
+
+        # #############################################################################
+        # Generate sample data
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from ml_scratch.knn import KNNRegressor
+
+        np.random.seed(0)
+        X = np.sort(5 * np.random.rand(40, 1), axis=0)
+        T = np.linspace(0, 5, 500)[:, np.newaxis]
+        y = np.sin(X).ravel()
+
+        # Add noise to targets
+        y[::5] += 1 * (0.5 - np.random.rand(8))
+
+        # #############################################################################
+        # Fit regression model
+        n_neighbors = 10
+
+
+        knn = KNNRegressor(n_neighbors)
+        y_ = knn.fit(X, y).predict(T)
+
+        plt.scatter(X, y, color='darkorange', label='data')
+        plt.plot(T, y_, color='navy', label='prediction')
+
+        plt.legend()
+        plt.title("KNeighborsRegressor")
+
+        plt.show()
+
 
     Parameters
     ----------
@@ -115,6 +174,8 @@ class KNNRegressor(BaseKNN):
 
         assert X.shape[1] == self._fit_X.shape[1], "Mismatched number of features from the fitted model \
         expected shape of (n_test_samples, {}) got (n_test_samples, {})".format(self._fit_X.shape[1], X.shape[1])
+
+        assert len(X.shape) == 2, "X must be a 2D array, got {}D array".format(len(X.shape))
 
         _, y_pred = self._find_neighbor(X)
 
