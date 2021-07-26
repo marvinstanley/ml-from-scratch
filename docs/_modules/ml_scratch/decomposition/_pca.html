@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ml_scratch.pca._pca &mdash; Machine Learning from Scratch 0.0.1 documentation</title>
+  <title>ml_scratch.decomposition._pca &mdash; Machine Learning from Scratch 0.0.1 documentation</title>
   
 
   
@@ -139,7 +139,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>ml_scratch.pca._pca</li>
+      <li>ml_scratch.decomposition._pca</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,11 +154,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for ml_scratch.pca._pca</h1><div class="highlight"><pre>
+  <h1>Source code for ml_scratch.decomposition._pca</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<div class="viewcode-block" id="PCA"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA">[docs]</a><span class="k">class</span> <span class="nc">PCA</span><span class="p">():</span>
+<div class="viewcode-block" id="PCA"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA">[docs]</a><span class="k">class</span> <span class="nc">PCA</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Principal component analysis (PCA).</span>
 
@@ -166,6 +166,32 @@
 <span class="sd">    This implementation uses eigen decomposition on the covariance matrix rather than Singular Value Decomposition (SVD)</span>
 <span class="sd">    </span>
 <span class="sd">    By default, values fitted are centered on 0 and scaled (standarized)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from ml_scratch.pca import PCA</span>
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        ###### USE THIS DATA ########</span>
+<span class="sd">        # define a matrix</span>
+<span class="sd">        A = np.array([[1, 2, 3, 4], </span>
+<span class="sd">                    [5, 5, 6, 7], </span>
+<span class="sd">                    [1, 4, 2, 3], </span>
+<span class="sd">                    [5, 3, 2, 1],</span>
+<span class="sd">                    [8, 1, 2, 2]])</span>
+<span class="sd">                    </span>
+<span class="sd">        ###### USE THIS DATA ########</span>
+
+<span class="sd">        # # create the PCA instance</span>
+<span class="sd">        pca = PCA(2, method=&#39;svd&#39;)</span>
+<span class="sd">        # fit on data</span>
+<span class="sd">        pca.fit(A)</span>
+<span class="sd">        # access values and vectors</span>
+<span class="sd">        print(pca.components_)</span>
+<span class="sd">        print(pca.explained_variance_)</span>
+<span class="sd">        # transform data</span>
+<span class="sd">        B = pca.transform(A)</span>
+<span class="sd">        print(B)</span>
 
 
 <span class="sd">    Parameters</span>
@@ -196,7 +222,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_components</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
 
-<div class="viewcode-block" id="PCA._get_covariance"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA._get_covariance">[docs]</a>    <span class="k">def</span> <span class="nf">_get_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA._get_covariance"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA._get_covariance">[docs]</a>    <span class="k">def</span> <span class="nf">_get_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the covariance of the matrix. Not meant to be used explicitly</span>
 
@@ -221,7 +247,7 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span></div>
 
-<div class="viewcode-block" id="PCA._standarize"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA._standarize">[docs]</a>    <span class="k">def</span> <span class="nf">_standarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA._standarize"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA._standarize">[docs]</a>    <span class="k">def</span> <span class="nf">_standarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Standarize the matrix. Not meant to be used explicitly.</span>
 
@@ -246,7 +272,7 @@
 
         <span class="k">return</span> <span class="n">x</span></div>
 
-<div class="viewcode-block" id="PCA._get_eigen"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA._get_eigen">[docs]</a>    <span class="k">def</span> <span class="nf">_get_eigen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA._get_eigen"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA._get_eigen">[docs]</a>    <span class="k">def</span> <span class="nf">_get_eigen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finding Eigenvalues and Eigenvectors in order to get ``explained_variance`` and ``components_``.</span>
 <span class="sd">        Not to be used explicitly</span>
@@ -266,7 +292,7 @@
         <span class="c1"># Since matrix from covariance is always symmetrical</span>
         <span class="c1"># We can immediately use complex Hermitian (conjugate symmetric)</span>
         <span class="c1"># Eigh already sorted the eigen value and vectors</span>
-        <span class="n">val</span><span class="p">,</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">val</span><span class="p">,</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">)</span>
 
         <span class="c1"># reverse the order of the eigen value</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -274,7 +300,7 @@
 
         <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">vec</span></div>
 
-<div class="viewcode-block" id="PCA._get_svd"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA._get_svd">[docs]</a>    <span class="k">def</span> <span class="nf">_get_svd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA._get_svd"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA._get_svd">[docs]</a>    <span class="k">def</span> <span class="nf">_get_svd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Using SVD to get the ``components_`` and ``explained_variance_``.</span>
 <span class="sd">        Only the matrix Sigma and Vh is going to be used</span>
@@ -304,7 +330,7 @@
 
         <span class="k">return</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Vh</span></div>
 
-<div class="viewcode-block" id="PCA.fit"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">limit_var_ratio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA.fit"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">limit_var_ratio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ratio_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit matrix X to the model to get the Principal Components.</span>
 <span class="sd">        </span>
@@ -350,10 +376,12 @@
         <span class="c1"># Set components that are kept</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 
-<div class="viewcode-block" id="PCA.transform"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA.transform"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply feature transformation or dimensionality reduction to matrix X</span>
 
@@ -377,7 +405,7 @@
         <span class="c1"># Transpose the components</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PCA.fit_transform"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.pca.PCA.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA.fit_transform"><a class="viewcode-back" href="../../../modules/pca.html#ml_scratch.decomposition.PCA.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit matrix X to the model to get the Principal Components and</span>
 <span class="sd">        apply feature transformation or dimensionality reduction to matrix X</span>

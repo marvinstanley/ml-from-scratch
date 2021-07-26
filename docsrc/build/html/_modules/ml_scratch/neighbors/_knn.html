@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ml_scratch.neighbors._knn &mdash; Machine Learning from Scratch 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Machine Learning from Scratch
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/pca.html">PCA module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/knn.html">kNN module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/distance_metrics.html">Distance Metric module</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Machine Learning from Scratch</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ml_scratch.neighbors._knn</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ml_scratch.neighbors._knn</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseKNN</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="KNNClassifier"><a class="viewcode-back" href="../../../modules/knn.html#ml_scratch.neighbors.KNNClassifier">[docs]</a><span class="k">class</span> <span class="nc">KNNClassifier</span><span class="p">(</span><span class="n">BaseKNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Nearest Neighbor for Categorical target values.</span>
+<span class="sd">    Counts the highest occuring target label from the near neighbors.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        It currently only accepts numpy arrays.</span>
+<span class="sd">        Be sure to convert your data to numpy arrays</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from ml_scratch.knn import KNNRegressor</span>
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        model = KNNRegressor(3)</span>
+
+<span class="sd">        A_x = np.array([[1, 2, 3, 4], </span>
+<span class="sd">                    [5, 5, 6, 7], </span>
+<span class="sd">                    [1, 4, 2, 3],</span>
+<span class="sd">                    [3, 1, 3, 7],</span>
+<span class="sd">                    [2, 8, 1, 9],</span>
+<span class="sd">                    [1, 5, 9, 7]])</span>
+
+<span class="sd">        # A_y = [&#39;A&#39;, &#39;A&#39;, &#39;A&#39;, &#39;B&#39;, &#39;B&#39;, &#39;B&#39;]</span>
+<span class="sd">        A_y = [1.0, 2.5, 0.6, -1.0, 5.0, 3.0]</span>
+
+<span class="sd">        B_x = np.array([[5, 3, 2, 1],</span>
+<span class="sd">                    [8, 1, 2, 2]])</span>
+
+<span class="sd">        model.fit(A_x, A_y)</span>
+<span class="sd">        print(model.predict(B_x))</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        k_neighbor : int</span>
+<span class="sd">            K number of neighbors to be used for finding target prediction</span>
+<span class="sd">            </span>
+<span class="sd">        distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default=&#39;manhttan&#39;</span>
+<span class="sd">            Distance metric used to find the distance between samples. See ml_scratch._distance for more info</span>
+
+<span class="sd">                - If ‘manhattan‘:</span>
+<span class="sd">                    Uses the manhattan distance, formula:</span>
+<span class="sd">                - If ‘euclidean‘:</span>
+<span class="sd">                    Uses the euclidean distance, formula:</span>
+<span class="sd">                - If ‘cosine‘:</span>
+<span class="sd">                    Uses the cosine distance, formula:</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        metrics_ : numpy.array of shape(n_samples, )</span>
+<span class="sd">            The distance metric from the test samples to the train samples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="k">assert</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;k_neighbor&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;k_neighbor must be an odd number&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">KNNClassifier</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KNNClassifier.predict"><a class="viewcode-back" href="../../../modules/knn.html#ml_scratch.neighbors.KNNClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts the output of the test set from the near neighbors.</span>
+<span class="sd">        Counts the highest occuring target label from the near neighbors.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            X : numpy.array of shape(n_test_samples, n_features)</span>
+<span class="sd">                The input of the testing set</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">            y_pred : numpy.array of shape(n_test_samples)</span>
+<span class="sd">                The predicted target values based on the test set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Mismatched number of features from the fitted model </span><span class="se">\</span>
+<span class="s2">        expected shape of (n_test_samples, </span><span class="si">{}</span><span class="s2">) got (n_test_samples, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X must be a 2D array, got </span><span class="si">{}</span><span class="s2">D array&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_neighbor</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># Find max occurance of label</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">Counter</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">y_pred</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="KNNRegressor"><a class="viewcode-back" href="../../../modules/knn.html#ml_scratch.neighbors.KNNRegressor">[docs]</a><span class="k">class</span> <span class="nc">KNNRegressor</span><span class="p">(</span><span class="n">BaseKNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Nearest Neighbor for continous target values.</span>
+<span class="sd">    Uses interpolation/mean to find the nearest value from the near neighbors.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        It currently only accepts numpy arrays.</span>
+<span class="sd">        Be sure to convert your data to numpy arrays</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # #############################################################################</span>
+<span class="sd">        # Generate sample data</span>
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import matplotlib.pyplot as plt</span>
+<span class="sd">        from ml_scratch.knn import KNNRegressor</span>
+
+<span class="sd">        np.random.seed(0)</span>
+<span class="sd">        X = np.sort(5 * np.random.rand(40, 1), axis=0)</span>
+<span class="sd">        T = np.linspace(0, 5, 500)[:, np.newaxis]</span>
+<span class="sd">        y = np.sin(X).ravel()</span>
+
+<span class="sd">        # Add noise to targets</span>
+<span class="sd">        y[::5] += 1 * (0.5 - np.random.rand(8))</span>
+
+<span class="sd">        # #############################################################################</span>
+<span class="sd">        # Fit regression model</span>
+<span class="sd">        n_neighbors = 10</span>
+
+
+<span class="sd">        knn = KNNRegressor(n_neighbors)</span>
+<span class="sd">        y_ = knn.fit(X, y).predict(T)</span>
+
+<span class="sd">        plt.scatter(X, y, color=&#39;darkorange&#39;, label=&#39;data&#39;)</span>
+<span class="sd">        plt.plot(T, y_, color=&#39;navy&#39;, label=&#39;prediction&#39;)</span>
+
+<span class="sd">        plt.legend()</span>
+<span class="sd">        plt.title(&quot;KNeighborsRegressor&quot;)</span>
+
+<span class="sd">        plt.show()</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        k_neighbor : int</span>
+<span class="sd">            K number of neighbors to be used for finding target prediction</span>
+
+<span class="sd">        distance_metric: {‘manhattan‘, ‘euclidean‘, ‘cosine‘}, default=&#39;manhttan&#39;</span>
+<span class="sd">            Distance metric used to find the distance between samples. See ml_scratch._distance for more info</span>
+
+<span class="sd">                - If ‘manhattan‘:</span>
+<span class="sd">                    Uses the manhattan distance</span>
+<span class="sd">                - If ‘euclidean‘:</span>
+<span class="sd">                    Uses the euclidean distance</span>
+<span class="sd">                - If ‘cosine‘:</span>
+<span class="sd">                    Uses the cosine distance</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        metrics_ : numpy.array of shape(n_samples, )</span>
+<span class="sd">            The distance metric from the test samples to the train samples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KNNRegressor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KNNRegressor.predict"><a class="viewcode-back" href="../../../modules/knn.html#ml_scratch.neighbors.KNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts the output of the test set from the near neighbors.</span>
+<span class="sd">        Uses interpolation/mean to find the nearest value from the near neighbors.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            X : numpy.array of shape(n_test_samples, n_features)</span>
+<span class="sd">                The input of the testing set</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ----------</span>
+<span class="sd">            y_pred : numpy.array of shape(n_test_samples)</span>
+<span class="sd">                The predicted target values based on the test set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Mismatched number of features from the fitted model </span><span class="se">\</span>
+<span class="s2">        expected shape of (n_test_samples, </span><span class="si">{}</span><span class="s2">) got (n_test_samples, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X must be a 2D array, got </span><span class="si">{}</span><span class="s2">D array&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_neighbor</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># Interpolate / Mean</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Stanley Marvin.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
