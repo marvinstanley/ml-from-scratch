@@ -1,5 +1,5 @@
-# pca-from-scratch
-Principal Component Analysis implementation from scratch
+# ml-from-scratch
+Machine Learning methods implementation from scratch
 
 Created for PACMANN AI Research Scientist Recruitment test
 
